@@ -33,13 +33,16 @@ mid <- art[
 plot(mid$usd_goal_real, mid$usd_pledged_real)
 ```
 
+Changing shapes
+Changing Public ARt to +
 ```{r}
 pchVals <- rep(1, nrow(mid))
-pchVals[mid$category=="Public Art"] <- 3
 
+pchVals[mid$category=="Public Art"] <- 3
+pchVals
 plot(mid$usd_goal_real, mid$usd_pledged_real, pch=pchVals)
 ```
-
+# Change Colors
 ```{r}
 colorVals <-  rep("black", nrow(mid))
 colorVals[mid$category=="Public Art"] <- "red"
@@ -51,16 +54,20 @@ plot(mid$usd_goal_real, mid$usd_pledged_real, pch=pchVals, col=colorVals)
 ```{r}
 lowPledge <- quantile(mid$average_pledge, prob=.1)
 
-colorVals <- rep("black", nrow(mid))
-colorVals[mid$average_pledge <= lowPledge] <- "green"
+colorVals <- rep("grey", nrow(mid))
+colorVals[mid$average_pledge <= lowPledge] <- "red"
 
 plot(mid$usd_goal_real, mid$usd_pledged_real, col=colorVals)
+lab <- rep("", nrow(mid))
+lab[mid$average_pledge <= lowPledge] <- mid$name[mid$average_pledge <= lowPledge]
+text(mid$usd_goal_real, mid$usd_pledged_real, label=lab, cex=.5)
 ```
 
 
 Let's say we want color-code the subcategories of Art...
 ```{r}
 subcats <- unique(art$category)
+subcats
 ```
 
 First we make these numbers...
@@ -73,14 +80,14 @@ Then we assign colors to each number...
 colors <-  c("green", "red", "blue", "orange", "purple", "black", "brown", "aquamarine1", "coral", "grey", "firebrick", "beige", "cornsilk")
 #Or get random colors with: 
 #colors <-  sample(colors(), length(subcats))
-#colors
+colors
 
 colors[categoryIndex]
 
 ```
 And use them in a plot
 ```{r}
-plot(mid$usd_goal_real, mid$usd_pledged_real, col=colors[categoryIndex], pch=19)
+plot(mid$usd_goal_real, mid$usd_pledged_real, col=colors[categoryIndex], pch=1)
 ```
 
 #Adding text
@@ -109,22 +116,24 @@ plot(catGoalAvg, catPledgedAvg)
 Can add labels
 ```{r}
 plot(catGoalAvg, catPledgedAvg)
-text(catGoalAvg, catPledgedAvg-300, labels=names(catGoalAvg))
+text(catGoalAvg, catPledgedAvg-300, labels=names(catGoalAvg), cex=.5)
 ```
 
 # Correlation
 The closer it is to +/- 1, the stronger the relationship
 ```{r}
-df[, c("usd_goal_real", "usd_pledged_real")]
-#cor(df[, c("usd_goal_real", "usd_pledged_real")])
-#cor(mid[, c("usd_goal_real", "usd_pledged_real")])
+m <- df[, c("usd_goal_real", "usd_pledged_real")]
+#cor(m)
+cor(mid[, c("usd_pledged_real", "usd_goal_real")])
 ```
 
 #Best fit line
 ```{r}
-lm(mid$usd_pledged_real ~ mid$usd_goal_real)
+lm(mid$usd_pledged_real~mid$usd_goal_real)
 ```
+
 ```{r}
-plot(mid$usd_goal_real, mid$usd_pledged_real)
+plot(mid$usd_goal_real, mid$usd_pledged_real, col="grey")
 abline(593.970, 1.053)
+abline(0,1, col="green")
 ```
